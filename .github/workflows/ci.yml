@@ -6,7 +6,6 @@ on:
 
 jobs:
   gh-release:
-    if: github.ref == 'refs/heads/main' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'release')
     name: Create Release
     runs-on: ubuntu-latest
     steps:
@@ -16,9 +15,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "18.0.0"
-
-      - name: Checkout main
-        run: git checkout main
 
       - name: Installing Dependencies
         run: yarn
@@ -31,6 +27,7 @@ jobs:
           prop_path: "version"
 
       - name: Creating Release on Github
+        if: github.ref == 'refs/heads/main' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'release')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PACKAGE_VERSION: v${{ steps.package-version.outputs.prop }}

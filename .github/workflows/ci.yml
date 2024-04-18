@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "develop"]
+
+jobs:
+  gh-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.0.0"
+
+      - name: Getting version
+        uses: notiz-dev/github-action-json-property@release
+        id: package-version
+        with:
+          path: "package.json"
+          prop_path: "version"
+
+      - name: Debug info
+        run: |
+          echo "GitHub Ref: $GITHUB_REF"
+          echo "Pull Request Merged: ${{ github.event.pull_request.merged }}"
+          echo "Labels: ${{ toJson(github.event.pull_request.labels) }}"
+
+      - name: Creating Release on Github
+        if: github.ref == 'refs/heads/main' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'release')
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGE_VERSION: v${{ steps.package-version.outputs.prop }}
+        with:
+          tag_name: $PACKAGE_VERSION
+          release_name: Release $PACKAGE_VERSION
+          draft: false
+          prerelease: false

@@ -16,15 +16,18 @@ jobs:
         with:
           node-version: "18.0.0"
 
-      - name: Installing Dependencies
-        run: yarn
-
       - name: Getting version
         uses: notiz-dev/github-action-json-property@release
         id: package-version
         with:
           path: "package.json"
           prop_path: "version"
+
+      - name: Debug info
+        run: |
+          echo "GitHub Ref: $GITHUB_REF"
+          echo "Pull Request Merged: ${{ github.event.pull_request.merged }}"
+          echo "Labels: ${{ toJson(github.event.pull_request.labels) }}"
 
       - name: Creating Release on Github
         if: github.ref == 'refs/heads/main' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'release')

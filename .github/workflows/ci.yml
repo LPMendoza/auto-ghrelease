@@ -30,7 +30,13 @@ jobs:
           echo "Labels: ${{ toJson(github.event.pull_request.labels) }}"
 
       - name: Creating Release on Github
+        if: github.ref == 'refs/heads/main' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'release')
+        uses: actions/create-release@v1
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PACKAGE_VERSION: v${{ steps.package-version.outputs.prop }}
-        run: gh release create $PACKAGE_VERSION --title $PACKAGE_VERSION --generate-notes
+        with:
+          tag_name: $PACKAGE_VERSION
+          release_name: Release $PACKAGE_VERSION
+          draft: false
+          prerelease: false

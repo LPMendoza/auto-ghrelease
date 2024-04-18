@@ -7,7 +7,6 @@ on:
 jobs:
   gh-release:
     name: Create Release
-    if: github.ref == 'refs/heads/main' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'release')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo

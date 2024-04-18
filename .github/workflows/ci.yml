@@ -7,6 +7,7 @@ on:
 jobs:
   gh-release:
     name: Create Release
+    if: github.ref == 'refs/heads/main' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'release')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -30,7 +31,6 @@ jobs:
           echo "Labels: ${{ toJson(github.event.pull_request.labels) }}"
 
       - name: Creating Release on Github
-        if: github.ref == 'refs/heads/main' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'release')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PACKAGE_VERSION: v${{ steps.package-version.outputs.prop }}

@@ -30,4 +30,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PACKAGE_VERSION: v${{ steps.package-version.outputs.prop }}
-        run: gh release create $PACKAGE_VERSION --title $PACKAGE_VERSION --generate-notes
+        run: gh release create $PACKAGE_VERSION --target main --title $PACKAGE_VERSION --generate-notes
